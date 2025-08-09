@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.ktor.client.andorid)
 // serialization
     implementation(libs.moshi)
+// view model
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
 
     implementation(libs.androidx.core.ktx)

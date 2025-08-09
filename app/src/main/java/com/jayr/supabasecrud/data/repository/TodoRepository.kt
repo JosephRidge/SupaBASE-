@@ -4,35 +4,57 @@ import com.jayr.supabasecrud.data.models.Todo
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
-import io.ktor.websocket.WebSocketDeflateExtension.Companion.install
+import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.storage.Storage
 
-class TodoRepository: TodoService {
+class TodoRepository : TodoService {
+
     val supabase = createSupabaseClient(
         supabaseUrl = "https://xyzcompany.supabase.co",
         supabaseKey = "public-anon-key"
     ) {
         install(Auth)
         install(Postgrest)
-        //install other modules
+        install(Storage)
     }
 
     override suspend fun createTask(todo: Todo): Todo? {
-        TODO("Not yet implemented")
+        val task = supabase.from("tasks").select().decodeSingle<Todo>()
+        return task
     }
 
     override suspend fun getAllTasks(): List<Todo> {
-        TODO("Not yet implemented")
+        val task = supabase.from("tasks").select().decodeList<Todo>()
+        return task
     }
 
     override suspend fun getTask(id: Int): Todo? {
-        TODO("Not yet implemented")
+        val todo = supabase.from("tasks").select() {
+            filter {
+                Todo::id eq id
+            }
+        }.decodeAsOrNull<Todo>()
+        return todo
     }
 
     override suspend fun updateTask(todo: Todo): Todo? {
-        TODO("Not yet implemented")
+        val todo = supabase.from("tasks").update(
+            todo
+        ) {
+            select()
+            filter {
+                eq("id", todo.id!!)
+            }
+        }.decodeSingle<Todo>()
+        return todo
     }
 
     override suspend fun deleteTask(id: Int): Boolean {
-        TODO("Not yet implemented")
+        supabase.from("cities").delete {
+            filter {
+                eq("id", id)
+            }
+        }
+        return getTask(id) == null
     }
 }
