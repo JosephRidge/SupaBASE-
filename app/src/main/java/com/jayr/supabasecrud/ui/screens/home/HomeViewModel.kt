@@ -18,7 +18,7 @@ class HomeViewModel: ViewModel() {
 
 //    init
 init {
-
+_todos.value = generateDummytTodos()
 }
 //    methods
 
