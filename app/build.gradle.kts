@@ -53,7 +53,9 @@ dependencies {
     implementation(libs.moshi)
 // view model
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-
+//  coil library
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

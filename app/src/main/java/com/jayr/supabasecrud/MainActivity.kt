@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.jayr.supabasecrud.ui.screens.home.HomeScreen
 import com.jayr.supabasecrud.ui.theme.SupabaseCRUDTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,8 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SupabaseCRUDTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    HomeScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
