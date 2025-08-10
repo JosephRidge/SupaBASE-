@@ -9,6 +9,13 @@ import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.UploadStatus
 import io.github.jan.supabase.storage.storage
 import io.github.jan.supabase.storage.uploadAsFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+sealed class UploadResult {
+    data class Progress(val percent: Float) : UploadResult()
+    data class Success(val url: String) : UploadResult()
+}
 
 class TodoRepository : TodoService {
 
@@ -22,17 +29,19 @@ class TodoRepository : TodoService {
     }
 
     override suspend fun createTask(todo: Todo): Todo? {
-        val task = supabase.from("tasks").select().decodeSingle<Todo>()
-        return task
+        val result = supabase.from("todo").insert(todo) {
+            select()
+        }.decodeSingle<Todo>()
+        return result
     }
 
     override suspend fun getAllTasks(): List<Todo> {
-        val task = supabase.from("tasks").select().decodeList<Todo>()
+        val task = supabase.from("todo").select().decodeList<Todo>()
         return task
     }
 
     override suspend fun getTask(id: Int): Todo? {
-        val todo = supabase.from("tasks").select() {
+        val todo = supabase.from("todo").select() {
             filter {
                 Todo::id eq id
             }
@@ -41,7 +50,7 @@ class TodoRepository : TodoService {
     }
 
     override suspend fun updateTask(todo: Todo): Todo? {
-        val todo = supabase.from("tasks").update(
+        val todo = supabase.from("todo").update(
             todo
         ) {
             select()
@@ -55,28 +64,29 @@ class TodoRepository : TodoService {
     override suspend fun insertImage(
         fileName: String,
         fileBytes: ByteArray
-    ): String? {
-        val bucket = supabase.storage.from("deepseek")
-        var uploadedUrl: String? = null
+    ): Flow<UploadResult>{
+        val bucket = supabase.storage.from("todo/images")
 
-        bucket.uploadAsFlow(fileName, fileBytes).collect { status ->
-            when (status) {
-                is UploadStatus.Progress -> {
-                    val percent = status.totalBytesSend.toFloat() / status.contentLength * 100
-                    println("Progress: $percent%")
-                }
-                is UploadStatus.Success -> {
-                    println("Upload successful!")
-                    uploadedUrl = bucket.publicUrl(fileName)
-                }
-            }
+         return bucket.uploadAsFlow(fileName, fileBytes)
+             .map{ status->
+                 when (status) {
+                     is UploadStatus.Progress -> {
+                         val percent = status.totalBytesSend.toFloat() / status.contentLength * 100
+                         UploadResult.Progress(percent)
+
+                     }
+
+                     is UploadStatus.Success -> {
+                         println("Upload successful!")
+                         UploadResult.Success(bucket.publicUrl(fileName))
+                     }
+                 }
+             }
         }
-        return uploadedUrl
-    }
 
 
     override suspend fun deleteTask(id: Int): Boolean {
-        supabase.from("cities").delete {
+        supabase.from("todo").delete {
             filter {
                 eq("id", id)
             }

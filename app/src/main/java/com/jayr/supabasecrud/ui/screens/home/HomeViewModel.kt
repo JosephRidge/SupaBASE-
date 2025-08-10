@@ -26,7 +26,7 @@ _todos.value = generateDummytTodos()
         return  listOf(
             Todo(
                 id = 1,
-                createdAt = System.currentTimeMillis(),
+                createdAt = System.currentTimeMillis().toString(),
                 title = "Buy groceries",
                 description = "Milk, eggs, bread, and fresh veggies",
                 media = "https://example.com/images/groceries.jpg",
@@ -35,7 +35,7 @@ _todos.value = generateDummytTodos()
             ),
             Todo(
                 id = 2,
-                createdAt = System.currentTimeMillis(),
+                createdAt = System.currentTimeMillis().toString(),
                 title = "Finish Kotlin project",
                 description = "Complete API integration and push to GitHub",
                 media = "https://example.com/images/kotlin_project.png",
@@ -44,7 +44,7 @@ _todos.value = generateDummytTodos()
             ),
             Todo(
                 id = 3,
-                createdAt = System.currentTimeMillis(),
+                createdAt = System.currentTimeMillis().toString(),
                 title = "Morning workout",
                 description = "30-minute run and stretching routine",
                 media = "https://example.com/images/workout.mp4",
@@ -53,7 +53,7 @@ _todos.value = generateDummytTodos()
             ),
             Todo(
                 id = 4,
-                createdAt = System.currentTimeMillis(),
+                createdAt = System.currentTimeMillis().toString(),
                 title = "Plan vacation",
                 description = "Research destinations and book flights",
                 media = "https://example.com/images/vacation.jpg",
