@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -180,10 +181,17 @@ fun TodoForm(
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         Button(
             onClick = {
-                todoViewModel.createPlace(
+             var result =   todoViewModel.createPlace(
                     title = title,
                     description = description,
                     dueDate = datePickerState.selectedDateMillis!!)
+                if (result!==null){
+                    Toast.makeText(context, "${title} task created!", Toast.LENGTH_SHORT).show()
+
+                    datePickerState.selectedDateMillis = 0
+                    description = ""
+                    title = ""
+                }
             }
         ) {
             Text(
