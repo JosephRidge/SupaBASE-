@@ -14,7 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,7 +34,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,9 +46,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.jayr.supabasecrud.R
 import com.jayr.supabasecrud.data.models.Todo
-import com.jayr.supabasecrud.ui.screens.home.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -57,7 +56,9 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoForm(
-    todoViewModel: TodoViewModel = viewModel(),
+    todoViewModel: TodoFormViewModel = viewModel(),
+    innerPaddingValues: PaddingValues,
+    navController: NavHostController,
     modifier: Modifier
 ) {
     var progress = todoViewModel.uploadProgress.collectAsState()
@@ -75,12 +76,9 @@ fun TodoForm(
         convertMillisToDate(it)
     } ?: ""
 
-
     // image picker:
     val context = LocalContext.current
     val launcher = launchFilePicker(context , todoViewModel )
-
-
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -98,6 +96,7 @@ fun TodoForm(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
+
         OutlinedTextField(
             value = description,
             label = { Text(text = "Description") },
@@ -185,6 +184,7 @@ fun TodoForm(
                     title = title,
                     description = description,
                     dueDate = datePickerState.selectedDateMillis!!)
+
                 if (result!==null){
                     Toast.makeText(context, "${title} task created!", Toast.LENGTH_SHORT).show()
 
@@ -223,7 +223,7 @@ fun getExtensionFromUri(context: Context, uri: Uri): String? {
 }
 
 @Composable
-fun launchFilePicker(context: Context,todoViewModel: TodoViewModel): ManagedActivityResultLauncher<Intent, ActivityResult> {
+fun launchFilePicker(context: Context,todoViewModel: TodoFormViewModel): ManagedActivityResultLauncher<Intent, ActivityResult> {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->

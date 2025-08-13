@@ -8,9 +8,8 @@ import com.jayr.supabasecrud.data.repository.UploadResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.sql.Date
 
-class TodoViewModel : ViewModel() {
+class TodoFormViewModel : ViewModel() {
     val todoRepository = TodoRepository()
 
     private val _uploadProgress = MutableStateFlow<Float>(0f)
@@ -28,10 +27,11 @@ class TodoViewModel : ViewModel() {
 
     fun createPlace(title: String, description:String, dueDate: Long) {
         viewModelScope.launch {
-            _todo.value = _todo.value.copy(title = title,
+            _todo.value = _todo.value.copy(
+                title = title,
                 description = description
-                        ,dueDate = dueDate
-                        ,isComplete = false)
+                ,dueDate = dueDate
+                ,isComplete = false)
             todoRepository.createTask(_todo.value)
         }
     }
